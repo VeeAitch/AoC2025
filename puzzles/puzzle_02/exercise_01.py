@@ -3,9 +3,76 @@ Puzzle 02 - Exercise 01
 """
 
 
+def load_id_ranges(filename):
+    """Load id-ranges from a file.
+    
+    File format: comma-separated ranges, each range is first-last
+    Example: 1-5, 10-15, 20-25
+    """
+    ranges = []
+    
+    with open(filename, 'r') as f:
+        content = f.read().strip()
+    
+    # Split by comma to get individual ranges
+    range_strings = content.split(',')
+    
+    for range_str in range_strings:
+        range_str = range_str.strip()
+        # Split by dash to get first and last
+        parts = range_str.split('-')
+        first = int(parts[0])
+        last = int(parts[1])
+        ranges.append((first, last))
+    
+    return ranges
+
+
+def is_invalid_id(id_num):
+    """Check if an ID is invalid.
+    
+    An ID is invalid if it's made of a sequence of digits repeated twice.
+    Examples: 55 (5 twice), 6464 (64 twice), 123123 (123 twice)
+    """
+    id_str = str(id_num)
+    length = len(id_str)
+    
+    # ID must have even length to be repeated
+    if length % 2 != 0:
+        return False
+    
+    # Split in half and compare
+    mid = length // 2
+    first_half = id_str[:mid]
+    second_half = id_str[mid:]
+    
+    return first_half == second_half
+
+
+def find_invalid_ids(ranges):
+    """Find all invalid IDs in the given ranges."""
+    invalid = []
+    
+    for first, last in ranges:
+        for id_num in range(first, last + 1):
+            if is_invalid_id(id_num):
+                invalid.append(id_num)
+    
+    return invalid
+
+
 def solve():
     """Solve exercise 01"""
-    pass
+    ranges = load_id_ranges('input.txt')
+    print("Loaded ranges:")
+    for first, last in ranges:
+        print(f"  {first}-{last}")
+    
+    invalid_ids = find_invalid_ids(ranges)
+    total = sum(invalid_ids)
+    
+    print(f"\nInvalid IDs: {invalid_ids}")
+    print(f"Total sum: {total}")
 
 
 if __name__ == "__main__":
